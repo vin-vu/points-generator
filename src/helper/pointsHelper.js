@@ -1,56 +1,81 @@
 module.exports.calculateTotalPoints = (receipt) => {
   let totalPoints = 0;
 
-  const retailer = receipt.retailer;
-  const alphanumericCountRetailer = retailer
-    .split("")
-    .filter((char) => /[a-zA-Z0-9]/.test(char)).length;
-    console.log('retailer points: ', alphanumericCountRetailer)
-  totalPoints += alphanumericCountRetailer;
+  const retailerPoints = calculateRetailerPoints(receipt.retailer);
+  console.log("retailer points: ", retailerPoints);
+  totalPoints += retailerPoints;
 
-  const receiptTotal = Number(receipt.total);
+  const receiptIntegerPoints = calculateIsInteger(Number(receipt.total));
+  console.log("receipt integer points: ", receiptIntegerPoints);
+  totalPoints += receiptIntegerPoints;
 
-  if (receiptTotal % 1 === 0) {
-    totalPoints += 50;
-    console.log("no cents points: ", 50);
-  }
+  const receiptMultiplePoint25Points = calculateIsMultiplePoint25(
+    Number(receipt.total)
+  );
+  console.log("receipt multiple 0.25 points: ", receiptMultiplePoint25Points);
+  totalPoints += receiptMultiplePoint25Points;
 
-  if (receiptTotal % 0.25 === 0) {
-    totalPoints += 25;
-    console.log('multiple of 0.25 points: ', 25)
-  }
+  const itemLengthPoints = calculateItemLengthPoints(receipt.items);
+  console.log("item length points: ", itemLengthPoints);
+  totalPoints += itemLengthPoints;
 
-  const itemsLengthDivide2 = Math.floor(receipt.items.length / 2) * 5;
-  console.log('itemsLengthDivide2 points: ', itemsLengthDivide2)
-  totalPoints += itemsLengthDivide2
+  const itemDescriptionPoints = calculateItemDescriptionPoints(receipt.items);
+  console.log("item description points: ", itemDescriptionPoints);
+  totalPoints += itemDescriptionPoints;
 
-  const itemsDescriptionPoints = receipt.items.reduce((acc, item) => {
+  const dayPoints = calculateDayPoints(receipt.purchaseDate);
+  console.log("day points: ", dayPoints);
+  totalPoints += dayPoints;
+
+  const purchaseTimePoints = calculatePurchaseTimePoints(receipt.purchaseTime);
+  console.log("purchase time points: ", purchaseTimePoints);
+  totalPoints += purchaseTimePoints;
+
+  console.log("final points: ", totalPoints);
+};
+
+const calculateRetailerPoints = (retailer) => {
+  return retailer.split("").filter((char) => /[a-zA-Z0-9]/.test(char)).length;
+};
+
+const calculateIsInteger = (receiptTotal) => {
+  return receiptTotal % 1 === 0 ? 50 : 0;
+};
+
+const calculateIsMultiplePoint25 = (receiptTotal) => {
+  return receiptTotal % 0.25 === 0 ? 25 : 0;
+};
+
+const calculateItemLengthPoints = (items) => {
+  return Math.floor(items.length / 2) * 5;
+};
+
+const calculateItemDescriptionPoints = (items) => {
+  return items.reduce((acc, item) => {
     const descriptionLength = item.shortDescription.trim().length;
     if (descriptionLength % 3 === 0) {
-      const descriptionPoints = Math.ceil(Number(item.price) * 0.2)
-      console.log('item descrip: ', item.shortDescription, 'points: ', descriptionPoints)
-      acc += descriptionPoints
+      const descriptionPoints = Math.ceil(Number(item.price) * 0.2);
+      console.log(
+        "item descrip: ",
+        item.shortDescription,
+        "points: ",
+        descriptionPoints
+      );
+      acc += descriptionPoints;
     }
     return acc;
-  }, 0)
+  }, 0);
+};
 
-  console.log('itemsDescriptionPoints: ', itemsDescriptionPoints)
-  totalPoints += itemsDescriptionPoints
+const calculateDayPoints = (date) => {
+  const [year, month, day] = date.split("-").map(Number);
+  return day % 2 !== 0 ? 6 : 0;
+};
 
-  const [year, month, day] = receipt.purchaseDate.split('-').map(Number);
-  if (day % 2 !== 0) {
-    console.log('day is odd add: ', 6)
-    totalPoints += 6;
-  }
-
-  const [hours, minutes] = receipt.purchaseTime.split(':').map(Number);
+const calculatePurchaseTimePoints = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
   const totalMinutes = hours * 60 + minutes;
   const startMinutes = 14 * 60;
   const endMinutes = 16 * 60;
-  if (startMinutes <= totalMinutes && totalMinutes <= endMinutes) {
-    totalPoints += 10;  
-    console.log('good time add points', 10)
-  }
-
-  console.log("pointsTotal: ", totalPoints);
+  return startMinutes <= totalMinutes && totalMinutes <= endMinutes ? 10 : 0;
 };
