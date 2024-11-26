@@ -32,6 +32,7 @@ module.exports.calculateTotalPoints = (receipt) => {
   totalPoints += purchaseTimePoints;
 
   console.log("final points: ", totalPoints);
+  return totalPoints;
 };
 
 const calculateRetailerPoints = (retailer) => {
