@@ -9,6 +9,10 @@ exports.receiptIdCreatePost = (req, res, next) => {
 
 exports.receiptPointsGet = (req, res, next) => {
   const { id } = req.params;
+
+  if (!receiptStorage.hasOwnProperty(id)) {
+    return res.status(404).json("No receipt found fo that id");
+  }
   console.log("id: ", id);
   res.send(id);
-}
+};
