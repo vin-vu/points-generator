@@ -14,6 +14,11 @@ module.exports.calculateTotalPoints = (receipt) => {
     console.log("no cents");
   }
 
+  if (receiptTotal % 0.25 === 0) {
+    pointsTotal += 25;
+    console.log('multiple of 0.25')
+  }
+
   console.log("pointsTotal: ", pointsTotal);
 
   console.log("receipt: ", JSON.stringify(receipt));
