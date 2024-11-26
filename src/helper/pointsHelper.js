@@ -19,7 +19,10 @@ module.exports.calculateTotalPoints = (receipt) => {
     console.log('multiple of 0.25')
   }
 
-  console.log("pointsTotal: ", pointsTotal);
+  const itemsLengthDivide2 = Math.floor(receipt.items.length / 2);
+  console.log('itemsLengthDivide2: ', itemsLengthDivide2)
+  pointsTotal += itemsLengthDivide2
 
-  console.log("receipt: ", JSON.stringify(receipt));
+
+  console.log("pointsTotal: ", pointsTotal);
 };
