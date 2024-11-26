@@ -17,7 +17,5 @@ exports.receiptPointsGet = (req, res, next) => {
 
   const receipt = receiptStorage[id]
   const points = calculateTotalPoints(receipt)
-
-  console.log("id: ", id);
   res.send(id);
 };

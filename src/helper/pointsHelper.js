@@ -37,6 +37,12 @@ module.exports.calculateTotalPoints = (receipt) => {
   console.log('itemsDescriptionPoints: ', itemsDescriptionPoints)
   totalPoints += itemsDescriptionPoints
 
+  const [year, month, day] = receipt.purchaseDate.split('-').map(Number);
+  if (day % 2 !== 0) {
+    console.log('day is odd add: ', 6)
+    totalPoints += 6;
+  }
+
   const [hours, minutes] = receipt.purchaseTime.split(':').map(Number);
   const totalMinutes = hours * 60 + minutes;
   const startMinutes = 14 * 60;
