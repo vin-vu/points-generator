@@ -1,3 +1,3 @@
-const receiptStorage = {}
+const receiptStorage = {};
 
 module.exports = receiptStorage;

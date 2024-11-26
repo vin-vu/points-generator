@@ -4,9 +4,7 @@ const validateReceipt = [
   body("retailer")
     .isString()
     .matches(/^[\w\s\-\&]+$/)
-    .withMessage(
-      "Retailer must be a valid string (alphanumeric, spaces, - or &)"
-    ),
+    .withMessage("Retailer must be a valid alphanumeric string"),
 
   body("purchaseDate")
     .isString()
@@ -23,9 +21,11 @@ const validateReceipt = [
   body("items")
     .isArray({ min: 1 })
     .withMessage("Items must be an array with at least one item")
-    .custom((items) => items.every((item) => item.shortDescription && item.price))
+    .custom((items) =>
+      items.every((item) => item.shortDescription && item.price)
+    )
     .withMessage("Each item must have a name and price"),
- 
+
   body("total")
     .isString()
     .matches(/^\d+\.\d{2}$/)

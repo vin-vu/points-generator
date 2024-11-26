@@ -2,36 +2,28 @@ module.exports.calculateTotalPoints = (receipt) => {
   let totalPoints = 0;
 
   const retailerPoints = calculateRetailerPoints(receipt.retailer);
-  console.log("retailer points: ", retailerPoints);
   totalPoints += retailerPoints;
 
   const receiptIntegerPoints = calculateIsInteger(Number(receipt.total));
-  console.log("receipt integer points: ", receiptIntegerPoints);
   totalPoints += receiptIntegerPoints;
 
   const receiptMultiplePoint25Points = calculateIsMultiplePoint25(
     Number(receipt.total)
   );
-  console.log("receipt multiple 0.25 points: ", receiptMultiplePoint25Points);
   totalPoints += receiptMultiplePoint25Points;
 
   const itemLengthPoints = calculateItemLengthPoints(receipt.items);
-  console.log("item length points: ", itemLengthPoints);
   totalPoints += itemLengthPoints;
 
   const itemDescriptionPoints = calculateItemDescriptionPoints(receipt.items);
-  console.log("item description points: ", itemDescriptionPoints);
   totalPoints += itemDescriptionPoints;
 
   const dayPoints = calculateDayPoints(receipt.purchaseDate);
-  console.log("day points: ", dayPoints);
   totalPoints += dayPoints;
 
   const purchaseTimePoints = calculatePurchaseTimePoints(receipt.purchaseTime);
-  console.log("purchase time points: ", purchaseTimePoints);
   totalPoints += purchaseTimePoints;
 
-  console.log("final points: ", totalPoints);
   return totalPoints;
 };
 

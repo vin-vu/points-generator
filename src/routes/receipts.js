@@ -16,7 +16,6 @@ router.post(
   receiptController.receiptIdCreatePost
 );
 
-// ** handle no param
 // GET request for getting number of points
 router.get("/:id/points", receiptController.receiptPointsGet);
 
