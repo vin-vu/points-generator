@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node src/app.js",
-    "devstart": "nodemon src/app.js"
+    "dev": "nodemon src/app.js"
   },
   "dependencies": {
     "debug": "~2.6.9",

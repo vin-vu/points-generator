@@ -1,3 +1,3 @@
-const receiptStorage = {};
+const receipts = {};
 
-module.exports = receiptStorage;
+module.exports = receipts;

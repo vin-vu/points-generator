@@ -48,12 +48,6 @@ const calculateItemDescriptionPoints = (items) => {
     const descriptionLength = item.shortDescription.trim().length;
     if (descriptionLength % 3 === 0) {
       const descriptionPoints = Math.ceil(Number(item.price) * 0.2);
-      console.log(
-        "item descrip: ",
-        item.shortDescription,
-        "points: ",
-        descriptionPoints
-      );
       acc += descriptionPoints;
     }
     return acc;

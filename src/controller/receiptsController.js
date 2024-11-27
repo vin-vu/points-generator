@@ -1,10 +1,10 @@
-const receiptStorage = require("../data/receiptStorage");
+const receipts = require("../data/receiptStorage");
 const { calculateTotalPoints } = require("../helper/pointsHelper");
 
 exports.createReceipt = (req, res, next) => {
   try {
     const { body, id } = req;
-    receiptStorage[id] = body;
+    receipts[id] = body;
     res.send({ id });
   } catch (error) {
     next(error);
@@ -15,11 +15,11 @@ exports.getPoints = (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!receiptStorage.hasOwnProperty(id)) {
+    if (!receipts.hasOwnProperty(id)) {
       return res.status(404).json("No receipt found fo that id");
     }
 
-    const receipt = receiptStorage[id];
+    const receipt = receipts[id];
     const points = calculateTotalPoints(receipt);
     res.send({ points });
   } catch (error) {
