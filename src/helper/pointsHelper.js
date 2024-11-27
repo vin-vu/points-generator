@@ -64,5 +64,5 @@ const calculatePurchaseTimePoints = (time) => {
   const totalMinutes = hours * 60 + minutes;
   const startMinutes = 14 * 60;
   const endMinutes = 16 * 60;
-  return startMinutes <= totalMinutes && totalMinutes <= endMinutes ? 10 : 0;
+  return startMinutes < totalMinutes && totalMinutes < endMinutes ? 10 : 0;
 };
