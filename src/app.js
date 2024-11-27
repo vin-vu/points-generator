@@ -3,9 +3,11 @@ const app = express();
 const port = 3000;
 
 const receiptsRouter = require("./routes/receipts.js");
+const errorHandler = require('./middleware/globalErrorHandler.js')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(errorHandler)
 
 app.use("/receipts", receiptsRouter);
 
