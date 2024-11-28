@@ -1,9 +1,9 @@
 const globalErrorHandler = (err, req, res, next) => {
   const statusCode = err.status || 500;
-  const message = err.message || "Internal Server Error";
+  const details = err.details || "Internal Server Error";
 
-  res.status(statusCode).json({
-    error: err.details
+  return res.status(statusCode).json({
+    error: err.details,
   });
 };
 
