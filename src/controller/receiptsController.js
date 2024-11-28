@@ -16,7 +16,10 @@ exports.getPoints = (req, res, next) => {
     const { id } = req.params;
 
     if (!receipts.hasOwnProperty(id)) {
-      return res.status(404).json("No receipt found for that id");
+      const error = new Error()
+      error.status = 404
+      error.details = "No receipt found for that id"
+      return next(error)
     }
 
     const receipt = receipts[id];

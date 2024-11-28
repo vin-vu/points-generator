@@ -37,12 +37,29 @@ describe("Receipts API Tests", () => {
     expect(res.body).toHaveProperty("id");
   });
 
-  it("POST /receipts/process - should return 404 for invalid receipt", async () => {
+  it("POST /receipts/process - should return 400 for invalid receipt", async () => {
     const invalidReceipt = { ...validReceipt, retailer: "!!!" };
     const res = await request(app)
       .post("/receipts/process")
       .send(invalidReceipt);
     expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("description");
+    expect(res.body).toHaveProperty("error");
+  });
+
+  it("GET /receipts/:id/points - should return points for valid receipt ID", async () => {
+    const postReceiptResponse = await request(app)
+      .post("/receipts/process")
+      .send(validReceipt);
+    const receiptId = postReceiptResponse.body.id;
+
+    const res = await request(app).get(`/receipts/${receiptId}/points`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("points");
+  });
+
+  it("GET /receipts/:id/points - should return 404 for nonexistent receipt ID", async () => {
+    const res = await request(app).get("/receipts/id123/points");
+    expect(res.status).toBe(404);
+    expect(res.body).toHaveProperty("error");
   });
 });
