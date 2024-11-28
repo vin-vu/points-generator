@@ -1,7 +1,7 @@
 const receipts = require("../data/receiptStorage");
 const { calculateTotalPoints } = require("../helper/pointsHelper");
 
-exports.createReceipt = (req, res, next) => {
+exports.saveReceipt = (req, res, next) => {
   try {
     const { body, id } = req;
     receipts[id] = body;

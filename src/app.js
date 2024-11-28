@@ -7,13 +7,12 @@ const errorHandler = require('./middleware/globalErrorHandler.js')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(errorHandler)
 
+// Receipts route
 app.use("/receipts", receiptsRouter);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+// Global error handler
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Receipt processor listening on port ${port}!`);
