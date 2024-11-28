@@ -5,8 +5,9 @@ const handleValidationErrors = (req, res, next) => {
 
   if (!errors.isEmpty()) {
     const error = new Error("The receipt is invalid");
-    error.status = 404;
+    error.status = 400;
     error.details = errors.errors;
+    console.log('error: ', error.message)
     return next(error);
   }
   return next();
