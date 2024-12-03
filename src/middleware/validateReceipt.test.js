@@ -34,4 +34,24 @@ describe("validateReceipt middleware", () => {
       ])
     );
   });
+
+  it("should return 400 if total is invalid", async () => {
+    const invalidReceipt = {
+      retailer: "Target",
+      purchaseDate: "2022-01-01",
+      purchaseTime: "13:01",
+      items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
+      total: "35.3", // Invalid total format
+    };
+
+    const res = await request(app).post("/receipts").send(invalidReceipt);
+    expect(res.status).toBe(400);
+    expect(res.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          msg: "Total must be a valid number with two decimal places (e.g., 6.49)",
+        }),
+      ])
+    );
+  });
 });
