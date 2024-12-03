@@ -21,7 +21,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-01",
       purchaseTime: "13:01",
       items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-      total: "35.35",
+      total: "6.49",
     };
 
     const res = await request(app).post("/receipts").send(invalidReceipt);
@@ -41,7 +41,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-aa", // Invalid date format
       purchaseTime: "13:01",
       items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-      total: "35.30",
+      total: "6.49",
     };
 
     const res = await request(app).post("/receipts").send(invalidReceipt);
@@ -61,7 +61,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-01",
       purchaseTime: "13:aa", // Invalid time format, no items
       items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-      total: "35.30",
+      total: "6.49",
     };
 
     const res = await request(app).post("/receipts").send(invalidReceipt);
@@ -81,7 +81,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-01",
       purchaseTime: "13:00", 
       items: [{ shortDescription: "Mountain Dew 12PK"}], // Invalid items list, item missing name/price
-      total: "35.30",
+      total: "6.49",
     };
 
     const res = await request(app).post('/receipts').send(invalidReceipt)
@@ -101,7 +101,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-01",
       purchaseTime: "13:00", 
       items: [], // Invalid items list
-      total: "35.30",
+      total: "6.49",
     };
 
     const res = await request(app).post('/receipts').send(invalidReceipt)
@@ -121,7 +121,7 @@ describe("validateReceipt middleware", () => {
       purchaseDate: "2022-01-01",
       purchaseTime: "13:01",
       items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-      total: "35.3", // Invalid total format
+      total: "6.aa", // Invalid total format
     };
 
     const res = await request(app).post("/receipts").send(invalidReceipt);
