@@ -75,6 +75,26 @@ describe("validateReceipt middleware", () => {
     );
   });
 
+  it('should return 400 if item list is empty', async () => {
+    const invalidReceipt = {
+      retailer: "Target",
+      purchaseDate: "2022-01-01",
+      purchaseTime: "13:00", 
+      items: [], // Invalid items list
+      total: "35.30",
+    };
+
+    const res = await request(app).post('/receipts').send(invalidReceipt)
+    expect(res.status).toBe(400)
+    expect(res.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          msg: "Items must be an array with at least one item",
+        }),
+      ])
+    );
+  })
+
   it("should return 400 if total is invalid", async () => {
     const invalidReceipt = {
       retailer: "Target",
