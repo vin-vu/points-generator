@@ -3,18 +3,21 @@ const express = require("express");
 const { validationResult } = require("express-validator");
 const validateReceipt = require("./validateReceipt");
 
-const app = express();
-
-app.use(express.json());
-app.post("/receipts", validateReceipt, (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-});
-
 describe("validateReceipt middleware", () => {
+  let app;
+
+  beforeAll(() => {
+    app = express();
+    app.use(express.json());
+    app.post("/receipts", validateReceipt, (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      res.status(200).send({ message: "Receipt valid!" });
+    });
+  });
+
   it("should return 400 if retailer is invalid", async () => {
     const invalidReceipt = {
       retailer: "!!!", // Invalid retailer name
@@ -75,17 +78,17 @@ describe("validateReceipt middleware", () => {
     );
   });
 
-  it('should return 400 if item list is empty', async () => {
+  it("should return 400 if item list is empty", async () => {
     const invalidReceipt = {
       retailer: "Target",
       purchaseDate: "2022-01-01",
-      purchaseTime: "13:00", 
-      items: [{ shortDescription: "Mountain Dew 12PK"}], // Invalid items list, item missing name/price
+      purchaseTime: "13:00",
+      items: [{ shortDescription: "Mountain Dew 12PK" }], // Invalid items list, item missing name/price
       total: "6.49",
     };
 
-    const res = await request(app).post('/receipts').send(invalidReceipt)
-    expect(res.status).toBe(400)
+    const res = await request(app).post("/receipts").send(invalidReceipt);
+    expect(res.status).toBe(400);
     expect(res.body.errors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -93,19 +96,19 @@ describe("validateReceipt middleware", () => {
         }),
       ])
     );
-  })
+  });
 
-  it('should return 400 if item is missing a property', async () => {
+  it("should return 400 if item is missing a property", async () => {
     const invalidReceipt = {
       retailer: "Target",
       purchaseDate: "2022-01-01",
-      purchaseTime: "13:00", 
+      purchaseTime: "13:00",
       items: [], // Invalid items list
       total: "6.49",
     };
 
-    const res = await request(app).post('/receipts').send(invalidReceipt)
-    expect(res.status).toBe(400)
+    const res = await request(app).post("/receipts").send(invalidReceipt);
+    expect(res.status).toBe(400);
     expect(res.body.errors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -113,7 +116,7 @@ describe("validateReceipt middleware", () => {
         }),
       ])
     );
-  })
+  });
 
   it("should return 400 if total is invalid", async () => {
     const invalidReceipt = {
@@ -133,5 +136,19 @@ describe("validateReceipt middleware", () => {
         }),
       ])
     );
+  });
+
+  it("should return 200 for a valid receipt", async () => {
+    const validReceipt = {
+      retailer: "Target",
+      purchaseDate: "2022-01-01",
+      purchaseTime: "13:00",
+      items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
+      total: "6.49",
+    };
+
+    const res = await request(app).post("/receipts").send(validReceipt);
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe("Receipt valid!");
   });
 });
