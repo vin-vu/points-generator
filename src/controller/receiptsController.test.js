@@ -101,76 +101,86 @@ describe("Receipts Controller", () => {
       });
     });
 
-    // it("should pass unexpected errors to next middleware", () => {
-    //   const mockReq = createMockReq();
-    //   const mockRes = createMockRes();
-    //   const mockNext = createMockNext();
+    it("should return an error if the receipt body is empty", () => {
+      const mockReq = createMockReq({}, "123");
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
 
-    //   jest.spyOn(global, "Object").mockImplementationOnce(() => {
-    //     throw new Error("Unexpected error");
-    //   });
-
-    //   getPoints(mockReq, mockRes, mockNext);
-
-    //   expect(mockNext).toHaveBeenCalledWith(expect.any(Error));
-    // });
-
-    describe("getPoints", () => {
-      it("should return points for a valid receipt ID", () => {
-        // Populate mock receiptStorage
-        receiptStorage["123"] = {
-          retailer: "Target",
-          purchaseDate: "2022-01-01",
-          purchaseTime: "13:01",
-          items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-          total: "6.49",
-        };
-
-        const mockReq = createMockReq({}, "123");
-        const mockRes = createMockRes();
-        const mockNext = createMockNext();
-        
-        getPoints(mockReq, mockRes, mockNext);
-
-        // Assertions
-        expect(calculateTotalPoints).toHaveBeenCalledWith(
-          receiptStorage["123"]
-        );
-        expect(mockRes.send).toHaveBeenCalledWith({ points: 12 }); // Points Returned
-        expect(mockNext).not.toHaveBeenCalled(); // No error occured
+      validationResult.mockReturnValue({
+        isEmpty: () => false,
+        errors: [{ msg: "Receipt body cannot be empty" }],
       });
 
-      it("should return 404 if no ID is provided", () => {
-        const mockReq = { params: {} }; // No ID
-        const mockRes = createMockRes();
-        const mockNext = createMockNext();
+      saveReceipt(mockReq, mockRes, mockNext);
 
-        getPoints(mockReq, mockRes, mockNext);
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 400,
+          message: "The receipt is invalid",
+          details: expect.arrayContaining([
+            { msg: "Receipt body cannot be empty" },
+          ]),
+        })
+      );
+    });
+  });
 
-        expect(mockNext).toHaveBeenCalledWith(
-          expect.objectContaining({
-            status: 404,
-            details: "No receipt found for that id",
-          })
-        );
-      });
+  describe("getPoints", () => {
+    it("should return points for a valid receipt ID", () => {
+      // Populate mock receiptStorage
+      receiptStorage["123"] = {
+        retailer: "Target",
+        purchaseDate: "2022-01-01",
+        purchaseTime: "13:01",
+        items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
+        total: "6.49",
+      };
 
-      it("should return a 404 error if receipt ID is not found", () => {
-        const mockReq = { params: { id: "abc" } };
-        const mockRes = createMockRes();
-        const mockNext = createMockNext();
+      // Mock the calculateTotalPoints function to return 12 points
+      calculateTotalPoints.mockImplementationOnce(() => 12);
 
-        getPoints(mockReq, mockReq, mockNext);
+      const mockReq = createMockReq({}, "123");
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
 
-        // Assertions
-        expect(mockNext).toHaveBeenCalledWith(
-          expect.objectContaining({
-            status: 404,
-            details: "No receipt found for that id",
-          })
-        ); // Pass 404 error to next global error handler
-        expect(mockRes.send).not.toHaveBeenCalledWith(); // No response sent
-      });
+      getPoints(mockReq, mockRes, mockNext);
+
+      // Assertions
+      expect(calculateTotalPoints).toHaveBeenCalledWith(receiptStorage["123"]);
+      expect(mockRes.send).toHaveBeenCalledWith({ points: 12 }); // Points Returned
+      expect(mockNext).not.toHaveBeenCalled(); // No error occured
+    });
+
+    it("should return 404 if no ID is provided", () => {
+      const mockReq = { params: {} }; // No ID
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
+
+      getPoints(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 404,
+          details: "No receipt found for that id",
+        })
+      );
+    });
+
+    it("should return a 404 error if receipt ID is not found", () => {
+      const mockReq = { params: { id: "abc" } };
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
+
+      getPoints(mockReq, mockReq, mockNext);
+
+      // Assertions
+      expect(mockNext).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 404,
+          details: "No receipt found for that id",
+        })
+      ); // Pass 404 error to next global error handler
+      expect(mockRes.send).not.toHaveBeenCalledWith(); // No response sent
     });
   });
 });
