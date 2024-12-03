@@ -11,6 +11,14 @@ jest.mock("../helper/pointsHelper", () => ({
   calculateTotalPoints: jest.fn().mockReturnValue(12),
 }));
 
+const createMockReq = (body = {}, id = "123") => ({
+  body,
+  id,
+  params: { id },
+});
+const createMockRes = () => ({ send: jest.fn() });
+const createMockNext = () => jest.fn();
+
 describe("Receipts Controller", () => {
   describe("saveReciept", () => {
     beforeEach(() => {
@@ -20,18 +28,16 @@ describe("Receipts Controller", () => {
 
     it("should save a valid receipt and return the ID", () => {
       // Mock request and response
-      const mockReq = {
-        body: {
-          retailer: "Target",
-          purchaseDate: "2022-01-01",
-          purchaseTime: "13:01",
-          items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-          total: "35.35",
-        },
-        id: "123",
+      const mockBody = {
+        retailer: "Target",
+        purchaseDate: "2022-01-01",
+        purchaseTime: "13:01",
+        items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
+        total: "35.35",
       };
-      const mockRes = { send: jest.fn() };
-      const mockNext = jest.fn();
+      const mockReq = createMockReq(mockBody, "123");
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
 
       // Mock validationResult to return no errors
       validationResult.mockReturnValue({
@@ -48,18 +54,16 @@ describe("Receipts Controller", () => {
 
     it("should return error for invalid receipt", () => {
       // Mock request and response
-      const mockReq = {
-        body: {
-          retailer: "Target!", // Invalid retailer
-          purchaseDate: "2022-01-01",
-          purchaseTime: "13:01",
-          items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-          total: "6.49",
-        },
-        id: "123",
+      const mockBody = {
+        retailer: "Target!", // Invalid retailer
+        purchaseDate: "2022-01-01",
+        purchaseTime: "13:01",
+        items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
+        total: "6.49",
       };
-      const mockRes = { send: jest.fn() };
-      const mockNext = jest.fn();
+      const mockReq = createMockReq(mockBody, "123");
+      const mockRes = createMockRes();
+      const mockNext = createMockNext();
 
       // Mock validationResult to return error
       validationResult.mockReturnValue({
@@ -122,10 +126,10 @@ describe("Receipts Controller", () => {
           total: "6.49",
         };
 
-        const mockReq = { params: { id: "123" } };
-        const mockRes = { send: jest.fn() };
-        const mockNext = jest.fn();
-
+        const mockReq = createMockReq({}, "123");
+        const mockRes = createMockRes();
+        const mockNext = createMockNext();
+        
         getPoints(mockReq, mockRes, mockNext);
 
         // Assertions
@@ -138,8 +142,8 @@ describe("Receipts Controller", () => {
 
       it("should return 404 if no ID is provided", () => {
         const mockReq = { params: {} }; // No ID
-        const mockRes = { send: jest.fn() };
-        const mockNext = jest.fn();
+        const mockRes = createMockRes();
+        const mockNext = createMockNext();
 
         getPoints(mockReq, mockRes, mockNext);
 
@@ -153,8 +157,8 @@ describe("Receipts Controller", () => {
 
       it("should return a 404 error if receipt ID is not found", () => {
         const mockReq = { params: { id: "abc" } };
-        const mockRes = { send: jest.fn() };
-        const mockNext = jest.fn();
+        const mockRes = createMockRes();
+        const mockNext = createMockNext();
 
         getPoints(mockReq, mockReq, mockNext);
 
