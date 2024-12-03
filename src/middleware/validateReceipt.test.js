@@ -95,7 +95,7 @@ describe("validateReceipt middleware", () => {
     );
   })
 
-  it('should return 400 if item list is empty', async () => {
+  it('should return 400 if item is missing a property', async () => {
     const invalidReceipt = {
       retailer: "Target",
       purchaseDate: "2022-01-01",
