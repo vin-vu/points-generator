@@ -13,14 +13,16 @@ describe("Receipts Controller", () => {
 
       saveReceipt(mockReq, mockRes, mockNext);
 
-      expect(receiptStorage).toHaveProperty("123", { retailer: "Target" });
-      expect(mockRes.send).toHaveBeenCalledWith({ id: "123" });
-      expect(mockNext).not.toHaveBeenCalled();
+      // Assertions
+      expect(receiptStorage).toHaveProperty("123", { retailer: "Target" }); // Receipt was saved
+      expect(mockRes.send).toHaveBeenCalledWith({ id: "123" }); // Correct response sent
+      expect(mockNext).not.toHaveBeenCalled(); // No error occured
     });
   });
 
   describe("getPoints", () => {
     it("should return points for a valid receipt ID", () => {
+      // Populate mock receiptStorage
       receiptStorage["123"] = {
         retailer: "Target",
         purchaseDate: "2022-01-01",
@@ -56,10 +58,11 @@ describe("Receipts Controller", () => {
 
       getPoints(mockReq, mockRes, mockNext);
 
+      // Assertions
       expect(mockRes.send).toHaveBeenCalledWith(
         expect.objectContaining({ points: expect.any(Number) })
-      );
-      expect(mockNext).not.toHaveBeenCalled();
+      ); // Points Returned
+      expect(mockNext).not.toHaveBeenCalled(); // No error occured
     });
 
     it("should return 404 with error message for invald receipt ID", () => {
@@ -69,13 +72,14 @@ describe("Receipts Controller", () => {
 
       getPoints(mockReq, mockReq, mockNext);
 
+      // Assertions
       expect(mockNext).toHaveBeenCalledWith(
         expect.objectContaining({
           status: 404,
           details: "No receipt found for that id",
         })
-      );
-      expect(mockRes.send).not.toHaveBeenCalledWith();
+      ); // Pass 404 error to next global error handler
+      expect(mockRes.send).not.toHaveBeenCalledWith(); // No response sent
     });
   });
 });
