@@ -59,7 +59,7 @@ describe("validateReceipt middleware", () => {
     const invalidReceipt = {
       retailer: "Target",
       purchaseDate: "2022-01-01",
-      purchaseTime: "13:aa", // Invalid time format
+      purchaseTime: "13:aa", // Invalid time format, no items
       items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
       total: "35.30",
     };
@@ -74,6 +74,26 @@ describe("validateReceipt middleware", () => {
       ])
     );
   });
+
+  it('should return 400 if item list is empty', async () => {
+    const invalidReceipt = {
+      retailer: "Target",
+      purchaseDate: "2022-01-01",
+      purchaseTime: "13:00", 
+      items: [{ shortDescription: "Mountain Dew 12PK"}], // Invalid items list, item missing name/price
+      total: "35.30",
+    };
+
+    const res = await request(app).post('/receipts').send(invalidReceipt)
+    expect(res.status).toBe(400)
+    expect(res.body.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          msg: "Each item must have a name and price",
+        }),
+      ])
+    );
+  })
 
   it('should return 400 if item list is empty', async () => {
     const invalidReceipt = {
