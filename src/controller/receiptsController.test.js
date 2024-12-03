@@ -8,7 +8,7 @@ jest.mock("express-validator", () => ({
   validationResult: jest.fn(),
 }));
 jest.mock("../helper/pointsHelper", () => ({
-  calculateTotalPoints: jest.fn().mockReturnValue(42),
+  calculateTotalPoints: jest.fn().mockReturnValue(12),
 }));
 
 describe("Receipts Controller", () => {
@@ -54,7 +54,7 @@ describe("Receipts Controller", () => {
           purchaseDate: "2022-01-01",
           purchaseTime: "13:01",
           items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-          total: "35.35",
+          total: "6.49",
         },
         id: "123",
       };
@@ -82,17 +82,34 @@ describe("Receipts Controller", () => {
       expect(mockRes.send).not.toHaveBeenCalled(); // No response sent
       expect(mockNext).toHaveBeenCalled(); // Error handling invoked
       const error = mockNext.mock.calls[0][0];
-      expect(error).toHaveProperty("status", 400);
-      expect(error).toHaveProperty("details", [
-        {
-          type: "field",
-          value: "Target!",
-          msg: "Retailer must be a valid alphanumeric string",
-          path: "retailer",
-          location: "body",
-        },
-      ]);
+      expect(error).toMatchObject({
+        status: 400,
+        message: "The receipt is invalid",
+        details: expect.arrayContaining([
+          {
+            type: "field",
+            value: "Target!",
+            msg: "Retailer must be a valid alphanumeric string",
+            path: "retailer",
+            location: "body",
+          },
+        ]),
+      });
     });
+
+    // it("should pass unexpected errors to next middleware", () => {
+    //   const mockReq = createMockReq();
+    //   const mockRes = createMockRes();
+    //   const mockNext = createMockNext();
+
+    //   jest.spyOn(global, "Object").mockImplementationOnce(() => {
+    //     throw new Error("Unexpected error");
+    //   });
+
+    //   getPoints(mockReq, mockRes, mockNext);
+
+    //   expect(mockNext).toHaveBeenCalledWith(expect.any(Error));
+    // });
 
     describe("getPoints", () => {
       it("should return points for a valid receipt ID", () => {
@@ -102,7 +119,7 @@ describe("Receipts Controller", () => {
           purchaseDate: "2022-01-01",
           purchaseTime: "13:01",
           items: [{ shortDescription: "Mountain Dew 12PK", price: "6.49" }],
-          total: "35.35",
+          total: "6.49",
         };
 
         const mockReq = { params: { id: "123" } };
@@ -115,13 +132,26 @@ describe("Receipts Controller", () => {
         expect(calculateTotalPoints).toHaveBeenCalledWith(
           receiptStorage["123"]
         );
-        expect(mockRes.send).toHaveBeenCalledWith(
-          expect.objectContaining({ points: expect.any(Number) })
-        ); // Points Returned
+        expect(mockRes.send).toHaveBeenCalledWith({ points: 12 }); // Points Returned
         expect(mockNext).not.toHaveBeenCalled(); // No error occured
       });
 
-      it("should return 404 with error message for invald receipt ID", () => {
+      it("should return 404 if no ID is provided", () => {
+        const mockReq = { params: {} }; // No ID
+        const mockRes = { send: jest.fn() };
+        const mockNext = jest.fn();
+
+        getPoints(mockReq, mockRes, mockNext);
+
+        expect(mockNext).toHaveBeenCalledWith(
+          expect.objectContaining({
+            status: 404,
+            details: "No receipt found for that id",
+          })
+        );
+      });
+
+      it("should return a 404 error if receipt ID is not found", () => {
         const mockReq = { params: { id: "abc" } };
         const mockRes = { send: jest.fn() };
         const mockNext = jest.fn();
