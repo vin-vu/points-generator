@@ -6,14 +6,12 @@ const receiptController = require("../controller/receiptsController");
 
 // Middleware
 const validateReceiptInput = require("../middleware/validateReceipt");
-const handleRequestValidationErrors = require("../middleware/handleValidationErrors");
 const assignReceiptId = require("../middleware/generateId");
 
 // POST request for storing receipts
 router.post(
   "/process",
   ...validateReceiptInput,
-  handleRequestValidationErrors,
   assignReceiptId,
   receiptController.saveReceipt
 );

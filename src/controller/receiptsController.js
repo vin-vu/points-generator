@@ -1,8 +1,17 @@
 const receipts = require("../data/receiptStorage");
 const { calculateTotalPoints } = require("../helper/pointsHelper");
+const { validationResult } = require("express-validator");
 
 exports.saveReceipt = (req, res, next) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error("The receipt is invalid");
+      error.status = 400;
+      error.details = errors.errors;
+      return next(error);
+    }
+
     const { body, id } = req;
     receipts[id] = body;
     return res.send({ id });
