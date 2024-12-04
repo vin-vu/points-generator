@@ -1,6 +1,5 @@
-const { v4: uuidv4, validate } = require("uuid");
+const { validate } = require("uuid");
 const generateUniqueId = require("./generateId");
-const express = require("express");
 const request = require("supertest");
 const app = require("../app");
 

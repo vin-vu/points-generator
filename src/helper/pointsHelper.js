@@ -27,7 +27,7 @@ const calculateItemDescriptionPoints = (items) => {
 };
 
 const calculateDayPoints = (date) => {
-  const [year, month, day] = date.split("-").map(Number);
+  const [, , day] = date.split("-").map(Number);
   return day % 2 !== 0 ? 6 : 0;
 };
 

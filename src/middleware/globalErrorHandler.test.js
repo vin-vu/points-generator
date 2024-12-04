@@ -1,4 +1,3 @@
-const express = require("express");
 const request = require("supertest");
 const app = require("../app");
 const globalErrorHandler = require("./globalErrorHandler");

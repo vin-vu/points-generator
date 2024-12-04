@@ -3,7 +3,7 @@ const { body } = require("express-validator");
 const validateReceipt = [
   body("retailer")
     .isString()
-    .matches(/^[\w\s\-\&]+$/)
+    .matches(/^[\w\s\-&]+$/)
     .withMessage("Retailer must be a valid alphanumeric string"),
 
   body("purchaseDate")
