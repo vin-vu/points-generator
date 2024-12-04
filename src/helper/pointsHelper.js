@@ -41,30 +41,15 @@ const calculatePurchaseTimePoints = (time) => {
 
 // Main function to calculate total points
 const calculateTotalPoints = (receipt) => {
-  let totalPoints = 0;
-
-  const retailerPoints = calculateRetailerPoints(receipt.retailer);
-  totalPoints += retailerPoints;
-
-  const receiptIntegerPoints = calculateIsInteger(Number(receipt.total));
-  totalPoints += receiptIntegerPoints;
-
-  const receiptMultiplePoint25Points = calculateIsMultiplePoint25(
-    Number(receipt.total)
-  );
-  totalPoints += receiptMultiplePoint25Points;
-
-  const itemLengthPoints = calculateItemLengthPoints(receipt.items);
-  totalPoints += itemLengthPoints;
-
-  const itemDescriptionPoints = calculateItemDescriptionPoints(receipt.items);
-  totalPoints += itemDescriptionPoints;
-
-  const dayPoints = calculateDayPoints(receipt.purchaseDate);
-  totalPoints += dayPoints;
-
-  const purchaseTimePoints = calculatePurchaseTimePoints(receipt.purchaseTime);
-  totalPoints += purchaseTimePoints;
+  const totalPoints = [
+    calculateRetailerPoints(receipt.retailer),
+    calculateIsInteger(Number(receipt.total)),
+    calculateIsMultiplePoint25(Number(receipt.total)),
+    calculateItemLengthPoints(receipt.items),
+    calculateItemDescriptionPoints(receipt.items),
+    calculateDayPoints(receipt.purchaseDate),
+    calculatePurchaseTimePoints(receipt.purchaseTime),
+  ].reduce((acc, points) => acc + points, 0);
 
   return totalPoints;
 };
